@@ -1,0 +1,3 @@
+name: 'ddpm_simple'
+model_config:
+  model_path: checkpoint/celeba_hq.ckpt

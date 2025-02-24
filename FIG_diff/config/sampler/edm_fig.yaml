@@ -1,0 +1,15 @@
+latent: False
+name: fig
+
+algo_param:
+  K: 5
+  lr: 0.08
+  mix_coef: 1 # only for inpainting
+
+diffusion_scheduler_config:
+  num_steps: 100
+  sigma_max: 100
+  sigma_min: 0.01
+  sigma_final: 0
+  schedule: 'linear'
+  timestep: 'poly-7'
