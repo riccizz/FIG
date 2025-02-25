@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>HRF</title>
+  <title>FIG</title>
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -60,7 +60,7 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Towards Hierarchical Rectified Flow</h1>
+            <h1 class="title is-1 publication-title">FIG: Flow with Interpolant Guidance for Linear Inverse Problems</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <!-- <span class="author-block">
@@ -71,29 +71,30 @@
                     <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Third Author</a>
                   </span> -->
               <span class="author-block">
-                      Yichi Zhang,
+                      Yichi Zhang<sup>1*</sup>,
                   </span>
                   <span class="author-block">
-                      Yici Yan,
+                      Yici Yan<sup>1*</sup>,
                   </span>
                   <span class="author-block">
-                      Alex Schwing,
+                      Xiangming Meng<sup>2</sup>,
                   </span>
                   <span class="author-block">
-                      Zhizhen Zhao
+                      Zhizhen Zhao<sup>1</sup>
                   </span>
                   </div>
 
                   <div class="is-size-5 publication-authors">
-                    <span class="author-block">University of Illinois Urbana-Champaign<br>ICLR 2025</span>
-                    <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
+                    <span class="author-block"><sup>1</sup>University of Illinois Urbana-Champaign
+                    <br><sup>2</sup>Zhejiang University<br>ICLR 2025</span>
+                    <span class="eql-cntrb"><small><br><sup>*</sup>Equal Contribution</small></span>
                   </div>
 
                   <div class="column has-text-centered">
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://openreview.net/forum?id=6F6qwdycgJ" target="_blank"
+                        <a href="https://openreview.net/forum?id=fs2Z2z3GRx" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -104,7 +105,7 @@
 
                   <!-- Github link -->
                   <span class="link-block">
-                    <a href="https://github.com/riccizz/HRF" target="_blank"
+                    <a href="https://github.com/riccizz/FIG" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fab fa-github"></i>
@@ -131,28 +132,21 @@
   </div>
 </section>
 
-<!-- Trajectory -->
+<!-- GIF -->
 <div class="columns is-centered results-container">
-  <div class="column is-one-third">
-    <img src="static/images/fig1_2to2/true_traj.gif" alt="First Image">
+  <div class="column">
+    <img src="static/images/fig1_gif/sr4.gif" alt="Second Image">
     <h2 class="subtitle has-text-centered">
-      Linear Interpolation
+      16x High Noise Super Resolution 
     </h2>
   </div>
-  <div class="column is-one-third">
-    <img src="static/images/fig1_2to2/rf_traj.gif" alt="Second Image">
+  <div class="column">
+    <img src="static/images/fig1_gif/inpainting90.gif" alt="Fourth Image">
     <h2 class="subtitle has-text-centered">
-      Rectified Flow (RF)
-    </h2>
-  </div>
-  <div class="column is-one-third">
-    <img src="static/images/fig1_2to2/hrf_traj.gif" alt="Third Image">
-    <h2 class="subtitle has-text-centered">
-      Hierarchical Rectified Flow (HRF)
+      90% Inpainting
     </h2>
   </div>
 </div>
-
 
 <!-- Paper abstract -->
 <section class="section hero is-light">
@@ -162,37 +156,8 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            We formulate a hierarchical rectified flow to model data distributions. It hierarchically couples multiple ordinary differential equations (ODEs) and defines a time-differentiable stochastic process that generates a data distribution from a known source distribution. Each ODE resembles the ODE that is solved in a classic rectified flow, but differs in its domain, i.e., location, velocity, acceleration, etc. Unlike the classic rectified flow formulation, which formulates a single ODE in the location domain and only captures the expected velocity field (sufficient to capture a multi-modal data distribution), the hierarchical rectified flow formulation models the multi-modal random velocity field, acceleration field, etc., in their entirety. This more faithful modeling of the random velocity field enables integration paths to intersect when the underlying ODE is solved during data generation. Intersecting paths in turn lead to integration trajectories that are more straight than those obtained in the classic rectified flow formulation, where integration paths cannot intersect. This leads to modeling of data distributions with fewer neural function evaluations. We empirically verify this on synthetic 1D and 2D data as well as MNIST and CIFAR10 data. 
+            Diffusion and flow matching models have been recently used to solve various linear inverse problems such as image restoration. Using a pre-trained diffusion or flow-matching model as a prior, most existing methods modify the reverse-time sampling process by incorporating the likelihood information from the measurement. However, they struggle in challenging scenarios, e.g., in case of high measurement noise or severe ill-posedness. In this paper, we propose Flow with Interpolant Guidance (FIG), an algorithm where the reverse-time sampling is efficiently guided with measurement interpolants through theoretically justified schemes. Experimentally, we demonstrate that FIG efficiently produce highly competitive results on a variety of linear image reconstruction tasks on natural image datasets. We improve upon state-of-the-art baseline algorithms, especially for challenging tasks. 
           </p>
-          <!-- <p>
-            Rectified Flow (RF)
-            <div class="math-equation">
-              \[
-                d x_t = v(x_t, t) dt
-              \]
-            </div>
-            
-            Hierarchical Rectified Flow with depth 2 (HRF2)
-            <div class="math-equation">
-              \[
-              \begin{cases}
-                 dv_\tau(z_t, t) = a(x_t, t, v_\tau, \tau) d\tau, & \text{with } v_0(z_t, t) \sim \pi_0, \quad \tau \in [0, 1],  \\
-                 dx_t = v_1(x_t, t) dt, & \text{with } x_0 \sim \rho_0, \quad t \in [0, 1].
-              \end{cases}
-              \]
-            </div>            
-            Towards Hierarchical Rectified Flow with higher depth (HRF$D$) 
-            <div class="math-equation">
-              \[
-              \begin{cases}
-                d z_{\boldsymbol{t}}^{(D)}\left(\boldsymbol{z}^{(1:D-1)}_{\boldsymbol{t}}, \boldsymbol{t}^{(1:D-1)}  \right)  = f (\boldsymbol{z}_{\boldsymbol{t}}, \boldsymbol{t}) dt^{(D)}, & \text{with } z_0^{(D)} \sim \boldsymbol{\rho}_0^{(D)},  \\
-                  d z_{\boldsymbol{t}}^{(D-1)} \left(\boldsymbol{z}^{(1:D-2)}_{\boldsymbol{t}}, \boldsymbol{t}^{(1:D-2)}  \right) = z_1^{(D)} \left(\boldsymbol{z}^{(1:D-1)}_{\boldsymbol{t}}, \boldsymbol{t}^{(1:D-1)}  \right) dt^{(D-1)}, & \text{with } z_0^{(D-1)} \sim \boldsymbol{\rho}^{(D-1)}_0,  \\
-                  \quad  \quad \vdots\\
-                d z^{(1)}_{\boldsymbol t} = z_1^{(2)}\left (z^{(1)}_{\boldsymbol t}, t^{(1)} \right)dt^{(1)}, & \text{with } z_0^{(1)} \sim \boldsymbol{\rho}^{(1)}_0.
-              \end{cases}
-              \]
-            </div>     
-          </p> -->
         </div>
       </div>
     </div>
@@ -200,46 +165,10 @@
 </section>
 <!-- End paper abstract -->
 
-
-<!-- velocity distribution -->
+<!-- diagram -->
 <div class="columns is-centered results-container">
-  <div class="column is-one-quarter">
-    <img src="static/images/fig2_v_analy/vdist_samples_-1_0.0.png" alt="Fourth Image">
-  </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig2_v_analy/vdist_samples_0_0.4.png" alt="Fifth Image">
-  </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig2_v_analy/vdist_samples_0.5_0.6.png" alt="Sixth Image">
-  </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig2_v_analy/vdist_samples_1_1.0.png" alt="Seventh Image">
-  </div>
-</div>
-<div class="columns is-centered results-container">
-  <div class="column is-one-quarter">
-    <img src="static/images/fig3_v_dist/vdist_hrf_-1_0.0.png" alt="Fourth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      $(x_t,t)=(-1.0,0.0)$
-    </h3>
-  </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig3_v_dist/vdist_hrf_0_0.4.png" alt="Fifth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      $(x_t,t)=(0.0,0.4)$
-    </h3>
-  </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig3_v_dist/vdist_hrf_0.5_0.6.png" alt="Sixth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      $(x_t,t)=(0.5,0.6)$
-    </h3>
-  </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig3_v_dist/vdist_hrf_1_1.0.png" alt="Seventh Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      $(x_t,t)=(1.0,1.0)$
-    </h3>
+  <div class="column">
+    <img src="static/images/diagram.png" alt="Image" style="display: block; margin: auto; width: 85%; height: auto;">
   </div>
 </div>
 
@@ -249,7 +178,7 @@
       <div class="column is-four-fifths">
         <div class="content has-text-justified">
           <p>
-            The above figure shows an example of the velocity distribution at different space-time locations for the source distribution corresponding to a standard Gaussian and the target distribution being a mixture of two Gaussians. In the top row, we validate the theoretically derived velocity distribution by comparing its probability density function (blue) with the empirical sample histogram (orange) at various times $t$ and locations $x_t$. The bottom row demonstrates how our proposed HRF effectively models the velocity distribution. Below are additional experimental results on 1D data, 2D data, MNIST, CIFAR-10, and ImageNet-32. We observe the proposed HRF to achieve compelling results. 
+            The above figure shows the overview of our FIG algorithm during the conditional sampling process. Black arrows (<span style="color: #000000;">\( \mathbf{\rightarrow} \)</span>) denote the unconditional update. Orange arrows (<span style="color: #FFB800;">\( \mathbf{\rightarrow} \)</span>) represent \( K \) times conditional updates with unconditional sample \( \boldsymbol{x}'_t \) and measurement interpolant \( \boldsymbol{y}_t \) at each timestep \( t \). Blue arrows (<span style="color: #66CCFF;">\( \mathbf{\rightarrow} \)</span>) indicate the measurement interpolation. Below are additional experimental results on CelebA-HQ, AFHQ-Cat, and LSUN-Bedroom datasets. FIG delivers impressive performance. 
           </p>
         </div>
       </div>
@@ -257,106 +186,122 @@
   </div>
 </section>
 
-<!-- 1d experiment -->
+<!-- celeba -->
 <div class="columns is-centered results-container">
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/1to2_WD_NFE.png" alt="Fourth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      Metrics
-    </h3>
+  <div class="column">
+    <img src="static/images/fig2_celeba/00015_label.png" alt="Image">
   </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/1to2_dist.png" alt="Fifth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      distribution
-    </h3>
+  <div class="column">
+    <img src="static/images/fig2_celeba/00015_y.png" alt="Image">
   </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/1to2_traj_400.png" alt="Sixth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      RF
-    </h3>
+  <div class="column">
+    <img src="static/images/fig2_celeba/00015_fig.png" alt="Image">
   </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/1to2_traj_20_20.png" alt="Seventh Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      HRF2
-    </h3>
+  <div class="column">
+    <img src="static/images/fig2_celeba/00017_label.png" alt="Image">
+  </div>
+  <div class="column">
+    <img src="static/images/fig2_celeba/00017_y.png" alt="Image">
+  </div>
+  <div class="column">
+    <img src="static/images/fig2_celeba/00017_fig.png" alt="Image">
   </div>
 </div>
-<!-- 2d experiment -->
+
 <div class="columns is-centered results-container">
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/new_moon_WD_NFE.png" alt="Fourth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      Metrics
-    </h3>
+  <div class="column">
+    <img src="static/images/fig3_celeba/00014_label.png" alt="Image">
   </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/moon_traj_400.png" alt="Fifth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      RF
-    </h3>
+  <div class="column">
+    <img src="static/images/fig3_celeba/00014_y.png" alt="Image" style="image-rendering: pixelated; image-rendering: crisp-edges;">
   </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/moon_traj_20_20.png" alt="Sixth Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      HRF2
-    </h3>
+  <div class="column">
+    <img src="static/images/fig3_celeba/00014_fig.png" alt="Image">
   </div>
-  <div class="column is-one-quarter">
-    <img src="static/images/fig4_lowdim/moon_traj_hrf3.png" alt="Seventh Image">
-    <h3 class="subtitle second-subtitle has-text-centered">
-      HRF3
-    </h3>
+  <div class="column">
+    <img src="static/images/fig3_celeba/00046_label.png" alt="Image">
+  </div>
+  <div class="column">
+    <img src="static/images/fig3_celeba/00046_y.png" alt="Image" style="image-rendering: pixelated; image-rendering: crisp-edges;">
+  </div>
+  <div class="column">
+    <img src="static/images/fig3_celeba/00046_fig.png" alt="Image">
   </div>
 </div>
-<!-- img experiment -->
+
 <div class="columns is-centered results-container">
-  <div class="column is-one-third">
-    <img src="static/images/fig5_img/mnist_10_50_48.png" alt="Fourth Image">
+  <div class="column">
+    <img src="static/images/fig4_cat/label_00015.png" alt="Image">
   </div>
-  <div class="column is-one-third">
-    <img src="static/images/fig5_img/cifar10_2_250_48.png" alt="Fifth Image">
+  <div class="column">
+    <img src="static/images/fig4_cat/00000.png" alt="Image">
   </div>
-  <div class="column is-one-third">
-    <img src="static/images/fig5_img/imagenet_2_250_48.png" alt="Sixth Image">
+  <div class="column">
+    <img src="static/images/fig4_cat/FIG_00015.png" alt="Image">
+  </div>
+  <div class="column">
+    <img src="static/images/fig4_cat/label_00132.png" alt="Image">
+  </div>
+  <div class="column">
+    <img src="static/images/fig4_cat/00002.png" alt="Image">
+  </div>
+  <div class="column">
+    <img src="static/images/fig4_cat/FIG_00132.png" alt="Image">
   </div>
 </div>
+
 <div class="columns is-centered results-container">
-  <div class="column is-one-third">
-    <img src="static/images/fig5_img/mnist_fid_v2.png" alt="Fourth Image">
+  <div class="column">
+    <img src="static/images/fig5_bed/label_00003.png" alt="Image">
     <h3 class="subtitle second-subtitle has-text-centered">
-      MNIST
+      Reference
     </h3>
   </div>
-  <div class="column is-one-third">
-    <img src="static/images/fig5_img/cifar10_fid_v2.png" alt="Fifth Image">
+  <div class="column">
+    <img src="static/images/fig5_bed/00000.png" alt="Image">
     <h3 class="subtitle second-subtitle has-text-centered">
-      CIFAR-10
+      Measure
     </h3>
   </div>
-  <div class="column is-one-third">
-    <img src="static/images/fig5_img/imagenet_fid.png" alt="Sixth Image">
+  <div class="column">
+    <img src="static/images/fig5_bed/FIG_00003.png" alt="Image">
     <h3 class="subtitle second-subtitle has-text-centered">
-      ImageNet-32
+      FIG
+    </h3>
+  </div>
+  <div class="column">
+    <img src="static/images/fig5_bed/label_00100.png" alt="Image">
+    <h3 class="subtitle second-subtitle has-text-centered">
+      Reference
+    </h3>
+  </div>
+  <div class="column">
+    <img src="static/images/fig5_bed/00006.png" alt="Image">
+    <h3 class="subtitle second-subtitle has-text-centered">
+      Measure
+    </h3>
+  </div>
+  <div class="column">
+    <img src="static/images/fig5_bed/FIG_00100.png" alt="Image">
+    <h3 class="subtitle second-subtitle has-text-centered">
+      FIG
     </h3>
   </div>
 </div>
 
 <!--BibTex citation -->
-  <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <h2 class="title">BibTeX</h2>
-      <pre><code>@inproceedings{
-    zhang2025towards,
-    title={Towards Hierarchical Rectified Flow},
-    author={Yichi Zhang and Yici Yan and Alex Schwing and Zhizhen Zhao},
+<section class="section" id="BibTeX">
+<div class="container is-max-desktop content">
+<h2 class="title">BibTeX</h2>
+<pre><code>@inproceedings{
+    yan2025fig,
+    title={{FIG}: Flow with Interpolant Guidance for Linear Inverse Problems},
+    author={Yici Yan and Yichi Zhang and Xiangming Meng and Zhizhen Zhao},
     booktitle={The Thirteenth International Conference on Learning Representations},
     year={2025},
-    url={https://openreview.net/forum?id=6F6qwdycgJ}
+    url={https://openreview.net/forum?id=fs2Z2z3GRx}
 }</code></pre>
-    </div>
+</div>
 </section>
 <!--End BibTex citation -->
 
