@@ -135,18 +135,30 @@
 <!-- GIF -->
 <div class="columns is-centered results-container">
   <div class="column">
-    <img src="static/images/fig1_gif/sr4.gif" alt="Second Image">
-    <h2 class="subtitle has-text-centered">
-      16x High Noise Super Resolution 
-    </h2>
+    <div style="text-align: center;">
+      <img src="static/images/fig1_gif/sr4.gif" alt="Super Resolution Image" style="width: 100%; max-width: 600px;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; width: 100%; max-width: 600px; margin: 0 auto; margin-bottom: 10px;">
+      <div><p>Reference</p></div>
+      <div><p>$y_t$</p></div>
+      <div><p>$x_t$</p></div>
+    </div>
+    <h2 class="subtitle has-text-centered">4x High Noise Super Resolution</h2>
   </div>
+
   <div class="column">
-    <img src="static/images/fig1_gif/inpainting90.gif" alt="Fourth Image">
-    <h2 class="subtitle has-text-centered">
-      90% Inpainting
-    </h2>
+    <div style="text-align: center;">
+      <img src="static/images/fig1_gif/inpainting90.gif" alt="Inpainting Image" style="width: 100%; max-width: 600px;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; width: 100%; max-width: 600px; margin: 0 auto; margin-bottom: 10px;">
+      <div><p>Reference</p></div>
+      <div><p>$y_t$</p></div>
+      <div><p>$x_t$</p></div>
+    </div>
+    <h2 class="subtitle has-text-centered">90% Inpainting</h2>
   </div>
 </div>
+
 
 <!-- Paper abstract -->
 <section class="section hero is-light">
@@ -156,7 +168,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Diffusion and flow matching models have been recently used to solve various linear inverse problems such as image restoration. Using a pre-trained diffusion or flow-matching model as a prior, most existing methods modify the reverse-time sampling process by incorporating the likelihood information from the measurement. However, they struggle in challenging scenarios, e.g., in case of high measurement noise or severe ill-posedness. In this paper, we propose Flow with Interpolant Guidance (FIG), an algorithm where the reverse-time sampling is efficiently guided with measurement interpolants through theoretically justified schemes. Experimentally, we demonstrate that FIG efficiently produce highly competitive results on a variety of linear image reconstruction tasks on natural image datasets. We improve upon state-of-the-art baseline algorithms, especially for challenging tasks. 
+            Diffusion and flow matching models have recently been used to solve various linear inverse problems in image restoration, such as super-resolution and inpainting. Using a pre-trained diffusion or flow-matching model as a prior, most existing methods modify the reverse-time sampling process by incorporating the likelihood information from the measurement. However, they struggle in challenging scenarios, such as high measurement noise or severe ill-posedness. In this paper, we propose Flow with Interpolant Guidance (FIG), an algorithm where reverse-time sampling is efficiently guided with measurement interpolants through theoretically justified schemes. Experimentally, we demonstrate that FIG efficiently produces highly competitive results on a variety of linear image reconstruction tasks on natural image datasets, especially for challenging tasks. 
           </p>
         </div>
       </div>
