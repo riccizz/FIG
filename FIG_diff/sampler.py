@@ -3,7 +3,7 @@ import tqdm
 import torch
 import numpy as np
 import torch.nn as nn
-
+import torchvision
 
 def get_sampler(**kwargs):
     latent = kwargs['latent']
@@ -645,46 +645,13 @@ class DPS(nn.Module):
         """
         if record:
             self.trajectory = Trajectory()
-        # pbar = tqdm.trange(self.annealing_scheduler.num_steps) if verbose else range(self.annealing_scheduler.num_steps)
-        xt = x_start
-        # diffusion_scheduler = Scheduler(**self.diffusion_scheduler_config)
        
         sampler = DPSSampler(self.algo_param, self.diffusion_scheduler)
         x0 = sampler.sample(model, x_start, operator, measurement, SDE=False, record=False, verbose=False)
+        if record:
+            self.trajectory = sampler.trajectory
 
         return x0
-    
-        # for step in pbar:
-        #     sigma = self.annealing_scheduler.sigma_steps[step]
-        #     # 1. reverse diffusion
-        #     diffusion_scheduler = Scheduler(**self.diffusion_scheduler_config, sigma_max=sigma)
-        #     sampler = DiffusionSampler(diffusion_scheduler)
-        #     x0hat = sampler.sample(model, xt, SDE=False, verbose=False)
-
-        #     # 2. langevin dynamics
-        #     x0y = self.lgvd.sample(x0hat, operator, measurement, sigma, step / self.annealing_scheduler.num_steps)
-
-        #     # 3. forward diffusion
-        #     xt = x0y + torch.randn_like(x0y) * self.annealing_scheduler.sigma_steps[step + 1]
-
-        #     # 4. evaluation
-        #     x0hat_results = x0y_results = {}
-        #     if evaluator and 'gt' in kwargs:
-        #         with torch.no_grad():
-        #             gt = kwargs['gt']
-        #             x0hat_results = evaluator(gt, measurement, x0hat)
-        #             x0y_results = evaluator(gt, measurement, x0y)
-
-        #         # record
-        #         if verbose:
-        #             main_eval_fn_name = evaluator.main_eval_fn_name
-        #             pbar.set_postfix({
-        #                 'x0hat' + '_' + main_eval_fn_name: f"{x0hat_results[main_eval_fn_name].item():.2f}",
-        #                 'x0y' + '_' + main_eval_fn_name: f"{x0y_results[main_eval_fn_name].item():.2f}",
-        #             })
-        #     if record:
-        #         self._record(xt, x0y, x0hat, sigma, x0hat_results, x0y_results)
-        # return xt
 
     def _record(self, xt, x0y, x0hat, sigma, x0hat_results, x0y_results):
         """
@@ -760,7 +727,7 @@ class FIGSampler(nn.Module):
         """
         if record:
             self.trajectory = Trajectory()
-        pbar = tqdm.tqdm(range(self.scheduler.num_steps)) # if verbose else range(self.scheduler.num_steps)
+        pbar = tqdm.tqdm(range(self.scheduler.num_steps)) 
         
         x = x_start
         K = self.param.get('K', 5)
@@ -802,17 +769,10 @@ class FIGSampler(nn.Module):
                     self._record(x, score, sigma, factor, epsilon)
                 else:
                     self._record(x, score, sigma, factor)
-            
-            # print("x:", x.max(), x.min())
-            # print("y:", y.max(), y.min())
-            # print("factor", factor)
 
-            # pbar.set_postfix({'max': x.max().item(),'min': x.min().item()}, refresh=False)
             pbar.set_postfix({'dist': operator.error(x,y).sum()}, refresh=False)
-            # if (step + 1) % 10 == 0:
-                # torchvision.utils.save_image(y.clamp(-1,1) / 2 + 0.5, f"./tmp/y_{step}.png")
-
-        # torchvision.utils.save_image(x.clamp(-1,1) / 2 + 0.5, f"./tmp/x_{step}.png")
+            # torchvision.utils.save_image(y.clamp(-1,1) / 2 + 0.5, f"./tmp/y_{step}.png")
+            # torchvision.utils.save_image(x.clamp(-1,1) / 2 + 0.5, f"./tmp/x_{step}.png")
 
         return x
 
@@ -877,48 +837,13 @@ class FIG(nn.Module):
             Returns:
                 torch.Tensor: The final sampled state.
         """
-        if record:
-            self.trajectory = Trajectory()
-        # pbar = tqdm.trange(self.annealing_scheduler.num_steps) if verbose else range(self.annealing_scheduler.num_steps)
-        xt = x_start
-        # diffusion_scheduler = Scheduler(**self.diffusion_scheduler_config)
        
         sampler = FIGSampler(self.algo_param, self.diffusion_scheduler)
         x0 = sampler.sample(model, x_start, operator, measurement, SDE=False, record=False, verbose=False)
+        if record:
+            self.trajectory = sampler.trajectory
 
         return x0
-    
-        # for step in pbar:
-        #     sigma = self.annealing_scheduler.sigma_steps[step]
-        #     # 1. reverse diffusion
-        #     diffusion_scheduler = Scheduler(**self.diffusion_scheduler_config, sigma_max=sigma)
-        #     sampler = DiffusionSampler(diffusion_scheduler)
-        #     x0hat = sampler.sample(model, xt, SDE=False, verbose=False)
-
-        #     # 2. langevin dynamics
-        #     x0y = self.lgvd.sample(x0hat, operator, measurement, sigma, step / self.annealing_scheduler.num_steps)
-
-        #     # 3. forward diffusion
-        #     xt = x0y + torch.randn_like(x0y) * self.annealing_scheduler.sigma_steps[step + 1]
-
-        #     # 4. evaluation
-        #     x0hat_results = x0y_results = {}
-        #     if evaluator and 'gt' in kwargs:
-        #         with torch.no_grad():
-        #             gt = kwargs['gt']
-        #             x0hat_results = evaluator(gt, measurement, x0hat)
-        #             x0y_results = evaluator(gt, measurement, x0y)
-
-        #         # record
-        #         if verbose:
-        #             main_eval_fn_name = evaluator.main_eval_fn_name
-        #             pbar.set_postfix({
-        #                 'x0hat' + '_' + main_eval_fn_name: f"{x0hat_results[main_eval_fn_name].item():.2f}",
-        #                 'x0y' + '_' + main_eval_fn_name: f"{x0y_results[main_eval_fn_name].item():.2f}",
-        #             })
-        #     if record:
-        #         self._record(xt, x0y, x0hat, sigma, x0hat_results, x0y_results)
-        # return xt
 
     def _record(self, xt, x0y, x0hat, sigma, x0hat_results, x0y_results):
         """

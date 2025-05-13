@@ -10,9 +10,6 @@ def get_config():
     # gaussian deblur
     config.gd = gd = ml_collections.ConfigDict()
 
-    # colorization
-    config.co = co = ml_collections.ConfigDict()
-
     # inpainting
     config.inp = inp = ml_collections.ConfigDict()
     

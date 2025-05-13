@@ -13,13 +13,12 @@ from tqdm import tqdm
 import losses
 import sde_lib
 from datasets import get_dataloader
-from measurements import GaussianNoise
+from forward_operator.measurements import get_operator, GaussianNoise
 from metrics import calc_metrics
 from models import ddpm, ncsnv2, ncsnpp
 from models import utils as mutils
 from models.ema import ExponentialMovingAverage
 from sampler import get_recon_algo, get_sampler
-from svd import get_svd_operator
 from utils import *
 
 
@@ -33,7 +32,6 @@ def main(argv):
   dataset_name = FLAGS.dataset_name
   sample_algo = FLAGS.sample_algo
   recon_algo = FLAGS.recon_algo
-  test = FLAGS.test
 
   # Create directory
   recon_folder = os.path.join(recon_root, f"results_{dataset_name}")
@@ -58,26 +56,23 @@ def main(argv):
   loader = get_dataloader(dataset_name=dataset_name, root=data_root, batch_size=1, shuffle=False, num_workers=0, drop_last=False)
 
   # Initialize model
-  # check_gpu()
   device = torch.device(f'cuda:0') if torch.cuda.is_available() else torch.device('cpu')
   score_model = mutils.create_model(config, device)
   optimizer = losses.get_optimizer(config, score_model.parameters())
   ema = ExponentialMovingAverage(score_model.parameters(), decay=config.model.ema_rate)
   state = dict(optimizer=optimizer, model=score_model, ema=ema, step=0)
 
-  ckpt_path = os.path.join(f'checkpoints/{dataset_name}.pth')
+  ckpt_path = os.path.join(f'checkpoint/{dataset_name}.pth')
   state = restore_checkpoint(ckpt_path, state, device=device)
   ema.copy_to(score_model.parameters())
   score_model = score_model.to(device)
   print("model in:", next(score_model.parameters()).device)
-  # check_gpu()
 
   # Setup SDEs
   sde = sde_lib.RectifiedFlow(init_type=config.sampling.init_type, noise_scale=config.sampling.init_noise_scale, use_ode_sampler=config.sampling.use_ode_sampler, sigma_var=config.sampling.sigma_variance, ode_tol=config.sampling.ode_tol, sample_N=config.sampling.sample_N)
 
-  operator, algo_config, y_shape = get_svd_operator(task, algo_config, device)
+  operator, algo_config, y_shape = get_operator(task, algo_config, device)
   sigma_y = 0.05
-  sigma_y = (torch.rand(y_shape) * 0.5).to(device)
   noiser = GaussianNoise(sigma=sigma_y)
   
   sampling_shape = (1, config.data.num_channels, config.data.image_size, config.data.image_size)
@@ -95,8 +90,10 @@ def main(argv):
     y_data = noiser(operator.H(scaler(x_data)))
 
     if task == "inpainting":
+      assert recon_algo != "fig", "use fig+ for inpainting."
       torchvision.utils.save_image(inverse_scaler(operator.H_pinv(y_data).reshape(y_shape)), os.path.join(task_dir, 'measure', fname), nrow=10, normalize=False)
     else:
+      assert recon_algo != "fig+", "only use fig+ for inpainting"
       torchvision.utils.save_image(inverse_scaler(y_data.reshape(y_shape)), os.path.join(task_dir, 'measure', fname), nrow=10, normalize=False)
 
     if recon_algo == "pgdm":
@@ -105,8 +102,6 @@ def main(argv):
         z0 = num_t * y_data.reshape(z0.shape) + (1-num_t) * z0
       else:
         z0 = num_t * recon_fn.operator.H_pinv(y_data).reshape(z0.shape) + (1-num_t) * z0
-      if test:
-        torchvision.utils.save_image(inverse_scaler(z0), os.path.join(progress_dir, f'start.png'), nrow=10, normalize=False)
       start_t = recon_fn.config.start
     else:
       start_t = 0
@@ -115,23 +110,12 @@ def main(argv):
     if recon_algo == "pseudo":
       samples = inverse_scaler(operator.H_pinv(y_data).reshape(x_data.shape))
     else:
-      samples = sampling_fn(score_model, z0, y_data, start_t, eps, test)
-    # if recon_algo == "fig" and task == "inpainting":
-    #   start_t = 30
-    #   num_t = start_t / sde.sample_N * (sde.T - eps) + eps
-    #   for j in range(3):
-    #     torchvision.utils.save_image(samples.clamp_(0.0, 1.0), os.path.join(progress_dir, f'mid_{j}.png'), nrow=10, normalize=False)
-    #     xt = num_t * scaler(samples.clamp_(0.0, 1.0)) + (1-num_t) * z0
-    #     torchvision.utils.save_image(inverse_scaler(xt).clamp_(0.0, 1.0), os.path.join(progress_dir, f'mid.png'), nrow=10, normalize=False)
-    #     samples = sampling_fn(score_model, xt, y_data, start_t, eps, test)
+      samples = sampling_fn(score_model, z0, y_data, start_t, eps)
     end_time = time.time()
+
     time_list.append(end_time - start_time)
 
     torchvision.utils.save_image(samples.clamp_(0.0, 1.0), os.path.join(recon_dir, fname), nrow=10, normalize=False)
-
-    if i == 99:
-      break
-    # break
 
   time_list = np.array(time_list)
   print(f"average inference time: {np.mean(time_list):.4f}±{np.std(time_list):.4f}")
@@ -154,8 +138,7 @@ if __name__ == "__main__":
   flags.DEFINE_string("task", None, "The inverse problem task")
   flags.DEFINE_enum("dataset_name", None, ["celeba", "lsun_bedroom", "afhq_cat"], "Dataset")
   flags.DEFINE_enum("sample_algo", None, ["ode", "sde"], "Running mode")
-  flags.DEFINE_enum("recon_algo", None, ["dps", "fig", "pgdm", "dmps", "uncond", "pseudo", "daps"], "Running mode")
-  flags.DEFINE_bool("test", False, "Test the algorithm on small datasets.")
+  flags.DEFINE_enum("recon_algo", None, ["uncond", "pseudo", "dps", "pgdm", "dmps", "fig", "fig+"], "Running mode")
   flags.mark_flags_as_required(["config", "task", "dataset_name", "sample_algo", "recon_algo"])
   
   app.run(main)

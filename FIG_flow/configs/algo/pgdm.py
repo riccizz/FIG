@@ -12,10 +12,6 @@ def get_config():
     config.gd = gd = ml_collections.ConfigDict()
     gd.start = 10
 
-    # colorization
-    config.co = co = ml_collections.ConfigDict()
-    co.start = 10
-
     # inpainting
     config.inp = inp = ml_collections.ConfigDict()
     inp.start = 10

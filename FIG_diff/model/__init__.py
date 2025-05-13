@@ -124,7 +124,6 @@ class DDPM(DiffusionModel):
         unet = Model()
         try:
             unet.load_state_dict(torch.load(model_config['model_path'], map_location='cpu', weights_only=True))
-            print("here")
         except Exception as e:
             print(f"Got exception: {e} / Randomly initialize")
         self.model = VPPrecond(model=unet, learn_sigma=False, conditional=False).to(device)

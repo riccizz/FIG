@@ -12,10 +12,6 @@ def get_config():
     config.gd = gd = ml_collections.ConfigDict()
     gd.c = 0.04
 
-    # colorization
-    config.co = co = ml_collections.ConfigDict()
-    co.c = 0.04
-
     # inpainting
     config.inp = inp = ml_collections.ConfigDict()
     inp.c = 0.04
