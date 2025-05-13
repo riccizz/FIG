@@ -39,6 +39,12 @@ pip install -r requirements.txt
 
 ```
 
+We use pretrained checkpoints from the following sources:
+
+- [RectifiedFlow](https://github.com/gnobitab/RectifiedFlow) for training-free `FIG-flow`
+- [DAPS](https://github.com/zhangbingliang2019/DAPS) and [DDNM](https://github.com/wyhuai/DDNM) for `FIG-diffusion`
+
+
 ## How to cite
 
 If you find this code useful in your research, please cite the following papers:
